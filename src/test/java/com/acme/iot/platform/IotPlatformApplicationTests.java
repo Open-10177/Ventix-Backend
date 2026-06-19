@@ -10,6 +10,5 @@ class IotPlatformApplicationTests {
 
     @Test
     void contextLoads() {
-        // solo verifica que el contexto cargue sin romper CI/CD
     }
 }
