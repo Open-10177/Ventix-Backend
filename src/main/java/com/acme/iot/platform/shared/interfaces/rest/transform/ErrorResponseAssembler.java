@@ -28,9 +28,15 @@ public final class ErrorResponseAssembler {
             case "VALIDATION_ERROR" -> "error.validation.message";
             case "BUSINESS_RULE_VIOLATION" -> "error.business-rule.message";
             case "UNEXPECTED_ERROR" -> "error.unexpected.message";
-            case String s when s.endsWith("_CONFLICT") -> "error.conflict.message";
-            case String s when s.endsWith("_NOT_FOUND") -> "error.not-found.message";
-            default -> "error.generic.message";
+            default -> {
+                if (errorCode.endsWith("_CONFLICT")) {
+                    yield "error.conflict.message";
+                } else if (errorCode.endsWith("_NOT_FOUND")) {
+                    yield "error.not-found.message";
+                } else {
+                    yield "error.generic.message";
+                }
+            }
         };
     }
 
@@ -52,9 +58,9 @@ public final class ErrorResponseAssembler {
                 return null;
             }
             String template = bundle.getString(key);
-            return MessageFormat.format(template, key);
+            return MessageFormat.format(template, args);
         } catch (MissingResourceException ex) {
-            return  null;
+            return null;
         }
     }
 
@@ -66,15 +72,20 @@ public final class ErrorResponseAssembler {
                 return fallback;
             }
             String template = bundle.getString(key);
-            return MessageFormat.format(template, key);
+            return MessageFormat.format(template, args);
         } catch (MissingResourceException ex) {
-            return  fallback;
+            return fallback;
         }
     }
 
     private static String toLocalizedMessageFromApplicationError(ApplicationError error) {
         String specificKey = toSpecificMessageKeyFromErrorCode(error.code());
-        String specificMessage = toLocalizedMessageOrNull(specificKey, error.details(), toEntityNameFromErrorCode(error.code()));
+        String specificMessage = toLocalizedMessageOrNull(
+                specificKey,
+                error.details(),
+                toEntityNameFromErrorCode(error.code())
+        );
+
         if (specificMessage != null) {
             return specificMessage;
         }
@@ -98,11 +109,17 @@ public final class ErrorResponseAssembler {
     public static HttpStatusCode toStatusFromErrorCode(String errorCode) {
         return switch (errorCode) {
             case "VALIDATION_ERROR" -> HttpStatus.BAD_REQUEST;
-            case String s when  s.endsWith("_NOT_FOUND") -> HttpStatus.NOT_FOUND;
             case "BUSINESS_RULE_VIOLATION" -> HttpStatusCode.valueOf(422);
-            case String s when  s.endsWith("_CONFLICT") -> HttpStatus.CONFLICT;
             case "UNEXPECTED_ERROR" -> HttpStatus.INTERNAL_SERVER_ERROR;
-            default -> HttpStatus.INTERNAL_SERVER_ERROR;
+            default -> {
+                if (errorCode.endsWith("_NOT_FOUND")) {
+                    yield HttpStatus.NOT_FOUND;
+                } else if (errorCode.endsWith("_CONFLICT")) {
+                    yield HttpStatus.CONFLICT;
+                } else {
+                    yield HttpStatus.INTERNAL_SERVER_ERROR;
+                }
+            }
         };
     }
 }

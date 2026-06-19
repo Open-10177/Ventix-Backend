@@ -18,11 +18,19 @@ public class ResponseEntityAssembler {
             Function<T, R> successResourceAssembler,
             HttpStatusCode successStatus
     ){
-        return switch (result) {
-            case Result.Success<T, ApplicationError> success ->
-                new ResponseEntity<>(successResourceAssembler.apply(success.value()), successStatus);
-            case Result.Failure<T, ApplicationError> failure ->
-                    ErrorResponseAssembler.toErrorResponseFromApplicationError(failure.error());
-        };
+
+        if (result instanceof Result.Success<T, ApplicationError> success) {
+            return new ResponseEntity<>(
+                    successResourceAssembler.apply(success.value()),
+                    successStatus
+            );
+        }
+
+        if (result instanceof Result.Failure<T, ApplicationError> failure) {
+            return ErrorResponseAssembler
+                    .toErrorResponseFromApplicationError(failure.error());
+        }
+
+        throw new IllegalStateException("Unknown Result type");
     }
 }
