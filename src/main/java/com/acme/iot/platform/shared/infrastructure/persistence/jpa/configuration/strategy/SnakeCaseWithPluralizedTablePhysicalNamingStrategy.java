@@ -1,6 +1,5 @@
 package com.acme.iot.platform.shared.infrastructure.persistence.jpa.configuration.strategy;
 
-import io.github.encryptorcode.pluralize.Pluralize;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
@@ -22,10 +21,20 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
         if (name == null) {
             return null;
         }
+
+        // quitar sufijos Entity (sin pluralize externo)
         String stripped = name.getText()
                 .replaceAll("PersistenceEntity$", "")
                 .replaceAll("Entity$", "");
-        String pluralized = Pluralize.pluralize(stripped);
+
+        // plural simple manual
+        String pluralized;
+        if (stripped.endsWith("s")) {
+            pluralized = stripped;
+        } else {
+            pluralized = stripped + "s";
+        }
+
         return toSnakeCase(Identifier.toIdentifier(pluralized, name.isQuoted()));
     }
 
@@ -43,10 +52,12 @@ public class SnakeCaseWithPluralizedTablePhysicalNamingStrategy implements Physi
         if (identifier == null) {
             return null;
         }
+
         String snake = identifier.getText()
                 .replaceAll("([a-z0-9])([A-Z])", "$1_$2")
                 .replaceAll("([A-Z]+)([A-Z][a-z])", "$1_$2")
                 .toLowerCase();
+
         return Identifier.toIdentifier(snake, identifier.isQuoted());
     }
 }
