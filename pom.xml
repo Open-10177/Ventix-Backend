@@ -40,7 +40,7 @@
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- H2 DATABASE (EN MEMORIA PARA AZURE) -->
+        <!-- H2 DATABASE (AZURE SAFE) -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
