@@ -1,7 +1,6 @@
 package com.acme.iot.platform.shared.infrastructure.documentation.openapi.configuration;
 
 import io.swagger.v3.oas.models.Components;
-import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -37,26 +36,19 @@ public class OpenApiConfiguration {
                         .description(this.applicationDescription)
                         .version(this.applicationVersion)
                         .contact(new Contact()
-                                .name("ACME Learning Center Support")
-                                .email("support@acme-learning.com")
-                                .url("https://acme-learning.com/support"))
+                                .name("Ventix Support")
+                                .email("rafaelhernandes257@gmail.com"))
                         .license(new License()
                                 .name("Apache 2.0")
-                                .url("https://www.apache.org/licenses/LICENSE-2.0.html")))
-                .externalDocs(new ExternalDocumentation()
-                        .description("ACME Learning Platform wiki Documentation")
-                        .url("https://acme-learning-platform.wiki.github.io/docs"));
+                                .url("https://www.apache.org/licenses/LICENSE-2.0.html")));
 
         openApi.servers(List.of(
                 new Server()
+                        .url("https://ventix-backend-1.onrender.com")
+                        .description("Production Environment (Render)"),
+                new Server()
                         .url("http://localhost:8080")
-                        .description("Local Development Environment"),
-                new Server()
-                        .url("https://staging-api.acme-learning.com")
-                        .description("Staging Environment"),
-                new Server()
-                        .url("https://api.acme-learning.com")
-                        .description("Production Environment")
+                        .description("Local Development Environment")
         ));
 
         final String securitySchemeName = "bearerAuth";
