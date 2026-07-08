@@ -4,7 +4,6 @@ import com.acme.iot.platform.dashboard.infrastructure.persistence.jpa.entities.*
 import com.acme.iot.platform.dashboard.infrastructure.persistence.jpa.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 /**
